@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">StayOn</string>
+    <string name="description">PC - USB 연결시\n화면 꺼짐 시간을\n30분으로 설정합니다.\n\n연결 해제시\n원래 설정으로 돌아 갑니다.</string>
+    <string name="stay_on_enabled">화면 켜짐 설정됨</string>
+    <string name="stay_on_disabled">화면켜짐 해제됨</string>
+    <string name="no_permission">시스템 설정 권한이 없습니다.</string>
+    <string name="dialog_need_permission_title">권한 요청</string>
+    <string name="dialog_need_permission_message">시스템 설정 수정 권한이 필요합니다.\n다음 화면에서 권한을 허용해 주세요.</string>
+</resources>
