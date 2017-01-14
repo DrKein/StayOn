@@ -9,20 +9,18 @@ import android.os.Handler;
  *
  */
 public class EmptyActivity extends Activity {
-    private static final String TAG = "EmptyActivity";
+    private static final String TAG = EmptyActivity.class.getSimpleName();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.act_empty);
-
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                finish();
             }
-        }, 1000);
+        }, 500);
     }
 
 

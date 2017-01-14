@@ -9,14 +9,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class PowerConnectionReceiver extends BroadcastReceiver {
-	private static final String TAG = "PowerConnectionReceiver";
+    private static final String TAG = PowerConnectionReceiver.class.getSimpleName();
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		String action = intent.getAction();
+
+        String action = intent.getAction();
+        L.d(TAG, "onReceive() : " + action);
 		if(!TextUtils.isEmpty(action)) {
-			Setting.setStayOn(context);
-		}
+			PlugMonitor.changed(context);
+        }
 
 		if(isNeedShowEmptyActivity(context)) {
 			Intent i = new Intent(context, EmptyActivity.class);
