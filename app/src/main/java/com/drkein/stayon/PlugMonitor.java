@@ -26,13 +26,11 @@ public class PlugMonitor {
 
         boolean enabled = (charger == BatteryManager.BATTERY_PLUGGED_USB);
         if(enabled) {
-            if(getLastState() == false) {
-                setWakeLock();
-                Toast.makeText(ctx, R.string.stay_on_enabled, Toast.LENGTH_LONG).show();
-            }
+            setWakeLock();
+            Toast.makeText(ctx, R.string.stay_on_enabled, Toast.LENGTH_LONG).show();
         } else {
+            releaseWakeLock();
             if(getLastState()) {
-                releaseWakeLock();
                 Toast.makeText(ctx, R.string.stay_on_disabled, Toast.LENGTH_LONG).show();
             }
         }
