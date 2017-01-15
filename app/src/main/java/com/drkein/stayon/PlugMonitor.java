@@ -1,6 +1,5 @@
 package com.drkein.stayon;
 
-import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -27,11 +26,15 @@ public class PlugMonitor {
 
         boolean enabled = (charger == BatteryManager.BATTERY_PLUGGED_USB);
         if(enabled) {
-            setWakeLock();
-            Toast.makeText(ctx, R.string.stay_on_enabled, Toast.LENGTH_LONG).show();
+            if(getLastState() == false) {
+                setWakeLock();
+                Toast.makeText(ctx, R.string.stay_on_enabled, Toast.LENGTH_LONG).show();
+            }
         } else {
-            releaseWakeLock();
-            Toast.makeText(ctx, R.string.stay_on_disabled, Toast.LENGTH_LONG).show();
+            if(getLastState()) {
+                releaseWakeLock();
+                Toast.makeText(ctx, R.string.stay_on_disabled, Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -46,7 +49,7 @@ public class PlugMonitor {
 
         mWakeLock.acquire();
 
-        disableKeyguard();
+        setLastState(true);
     }
 
     private static void releaseWakeLock() {
@@ -54,28 +57,13 @@ public class PlugMonitor {
         if(mWakeLock != null) {
             mWakeLock.release();
         }
-
-        enableKeyguard();
+        setLastState(false);
     }
 
-
-    private static void disableKeyguard() {
-        KeyguardManager km = (KeyguardManager)mCtx.getSystemService(Context.KEYGUARD_SERVICE);
-        if(km != null) {
-            KeyguardManager.KeyguardLock kl = km.newKeyguardLock(Context.KEYGUARD_SERVICE);
-            if(kl != null) {
-                kl.disableKeyguard();
-            }
-        }
+    private static void setLastState(boolean lockIsOn) {
+        mCtx.getSharedPreferences(TAG, Context.MODE_PRIVATE).edit().putBoolean("lockIsOn", lockIsOn).apply();
     }
-
-    private static void enableKeyguard() {
-        KeyguardManager km = (KeyguardManager)mCtx.getSystemService(Context.KEYGUARD_SERVICE);
-        if(km != null) {
-            KeyguardManager.KeyguardLock kl = km.newKeyguardLock(Context.KEYGUARD_SERVICE);
-            if(kl != null) {
-                kl.reenableKeyguard();
-            }
-        }
+    private static boolean getLastState() {
+        return mCtx.getSharedPreferences(TAG, Context.MODE_PRIVATE).getBoolean("lockIsOn", false);
     }
 }

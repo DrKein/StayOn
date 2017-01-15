@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.drkein.stayon"
-        minSdkVersion 14
+        minSdkVersion 16
         targetSdkVersion 23
     }
 

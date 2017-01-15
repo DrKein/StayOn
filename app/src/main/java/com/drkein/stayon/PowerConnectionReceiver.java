@@ -20,14 +20,14 @@ public class PowerConnectionReceiver extends BroadcastReceiver {
 			PlugMonitor.changed(context);
         }
 
-		if(isNeedShowEmptyActivity(context)) {
+		if(isNeedToShowEmptyActivity(context)) {
 			Intent i = new Intent(context, EmptyActivity.class);
 			i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			context.startActivity(i);
 		}
 	}
 
-	private boolean isNeedShowEmptyActivity(Context ctx) {
+	private boolean isNeedToShowEmptyActivity(Context ctx) {
 		String lastRunDate = ctx.getSharedPreferences(TAG, Context.MODE_PRIVATE).getString("lastRunDate", "");
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		String today = sdf.format(new Date());
