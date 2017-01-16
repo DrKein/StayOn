@@ -1,4 +1,4 @@
-package com.drkein.stayon;
+package com.drkein.stayon.act;
 
 import android.app.Activity;
 import android.os.Bundle;
