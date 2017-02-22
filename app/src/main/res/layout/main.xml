@@ -2,31 +2,39 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:gravity="center"
-              android:padding="20dp"
-              android:orientation="vertical">
+              android:background="#f8f8f8"
+              android:orientation="vertical"
+              android:padding="20dp">
+
+    <TextView
+        android:id="@+id/tvDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="@string/description"
+        android:textColor="#333"
+        android:textSize="30sp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/description"
-        android:textSize="30sp"/>
+        android:layout_below="@id/tvDescription"
+        android:layout_marginTop="20dp"
+        android:text="@string/main_turn_on_manual_text"
+        android:textColor="#333"
+        android:textSize="15sp"/>
 
-    <LinearLayout
-        android:layout_marginTop="30dp"
-        android:layout_width="match_parent"
-        android:orientation="horizontal"
-        android:layout_height="wrap_content">
-        <TextView
-            android:text="@string/main_turn_on_manual_text"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"/>
-        <Switch
-            android:id="@+id/manualSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
+    <Switch
+        android:id="@+id/manualSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tvVersion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="v2.0.0"
+        android:textColor="#333"/>
 
 </LinearLayout>

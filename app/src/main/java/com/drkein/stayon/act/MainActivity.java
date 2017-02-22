@@ -7,7 +7,9 @@ import android.os.BatteryManager;
 import android.os.Bundle;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.TextView;
 
+import com.drkein.stayon.BuildConfig;
 import com.drkein.stayon.R;
 import com.drkein.stayon.service.WakeLockService;
 import com.drkein.stayon.tools.L;
@@ -45,6 +47,8 @@ public class MainActivity extends Activity {
             sendStartService();
             manualSwitch.setChecked(true);
         }
+
+        ((TextView)findViewById(R.id.tvVersion)).setText("v"+ BuildConfig.VERSION_NAME);
     }
 
     private void sendStartService() {
@@ -53,6 +57,7 @@ public class MainActivity extends Activity {
         intent.putExtra("ACTION", WakeLockService.ACTION_START);
         startService(intent);
     }
+
     private void sendStopService() {
         L.d(TAG, "sendStopService() ");
         Intent intent = new Intent(this, WakeLockService.class);
