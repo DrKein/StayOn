@@ -1,6 +1,7 @@
 package com.drkein.stayon.service;
 
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +10,9 @@ import android.os.PowerManager;
 import android.text.TextUtils;
 
 import com.drkein.stayon.R;
+import com.drkein.stayon.act.MainActivity;
 import com.drkein.stayon.tools.L;
+import com.drkein.stayon.tools.Pref;
 
 /**
  * Created by kein on 2017. 1. 16..
@@ -30,7 +33,7 @@ public class WakeLockService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent.getStringExtra("ACTION");
-        if(TextUtils.isEmpty(action) || action.equals(ACTION_STOP)) {
+        if (TextUtils.isEmpty(action) || action.equals(ACTION_STOP)) {
             stopWakeLock();
         } else {
             startWakeLock();
@@ -43,28 +46,30 @@ public class WakeLockService extends Service {
         releaseWakeLock();
         stopForeground(true);
         stopSelf();
-        setServiceRunning(false);
+        Pref.setServiceRunning(getApplicationContext(), false);
     }
 
     private PowerManager.WakeLock mWakeLock;
 
     private void startWakeLock() {
         L.d(TAG, "startWakeLock() ");
-        if(getServiceRunning()) {
-            PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
-            mWakeLock = pm.newWakeLock( PowerManager.ACQUIRE_CAUSES_WAKEUP
-                    | PowerManager.SCREEN_DIM_WAKE_LOCK, "hello");
-            mWakeLock.acquire();
-
-            startForeground();
-            setServiceRunning(true);
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        if(mWakeLock == null) {
+            mWakeLock = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK, "hello");
         }
+        if(!mWakeLock.isHeld()) {
+            mWakeLock.acquire();
+            startForeground();
+        }
+
+        Pref.setServiceRunning(getApplicationContext(), true);
     }
 
     private void releaseWakeLock() {
         L.d(TAG, "releaseWakeLock() ");
-        if(mWakeLock != null) {
+        if (mWakeLock != null) {
             mWakeLock.release();
+            mWakeLock = null;
         }
     }
 
@@ -75,13 +80,9 @@ public class WakeLockService extends Service {
                         .setContentTitle("Stay On")
                         .setContentText("Wake lock activated.");
 
-        startForeground(100, mBuilder.build());
-    }
+        PendingIntent intent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        mBuilder.setContentIntent(intent);
 
-    private void setServiceRunning(boolean running) {
-        getSharedPreferences(TAG, Context.MODE_PRIVATE).edit().putBoolean("running", running).apply();
-    }
-    private boolean getServiceRunning() {
-        return  getSharedPreferences(TAG, Context.MODE_PRIVATE).getBoolean("running", false);
+        startForeground(100, mBuilder.build());
     }
 }

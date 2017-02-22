@@ -1,7 +1,6 @@
 package com.drkein.stayon.act;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
@@ -12,6 +11,7 @@ import android.widget.Switch;
 import com.drkein.stayon.R;
 import com.drkein.stayon.service.WakeLockService;
 import com.drkein.stayon.tools.L;
+import com.drkein.stayon.tools.Pref;
 
 /**
  * @author kein
@@ -25,18 +25,9 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        Intent batteryStatus = registerReceiver(null, intentFilter);
-        int charger = batteryStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
-
-        if((charger == BatteryManager.BATTERY_PLUGGED_USB)) {
-            sendStartService();
-        }
-        Switch mManualSwitch;
-        mManualSwitch = (Switch)findViewById(R.id.manualSwitch);
-        boolean manualSwitch = getPreferences(Context.MODE_PRIVATE).getBoolean("manualSwitch", false);
-        mManualSwitch.setChecked(manualSwitch);
-        mManualSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        Switch manualSwitch = (Switch)findViewById(R.id.manualSwitch);
+        manualSwitch.setChecked(Pref.getServiceRunning(this));
+        manualSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(b) {
@@ -44,9 +35,16 @@ public class MainActivity extends Activity {
                 } else {
                     sendStopService();
                 }
-                getPreferences(Context.MODE_PRIVATE).edit().putBoolean("manualSwitch", b).apply();
             }
         });
+
+        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = registerReceiver(null, intentFilter);
+        int charger = batteryStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
+        if((charger == BatteryManager.BATTERY_PLUGGED_USB)) {
+            sendStartService();
+            manualSwitch.setChecked(true);
+        }
     }
 
     private void sendStartService() {
