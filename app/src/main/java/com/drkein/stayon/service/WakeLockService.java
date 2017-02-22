@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
 import com.drkein.stayon.R;
@@ -47,6 +48,15 @@ public class WakeLockService extends Service {
         stopForeground(true);
         stopSelf();
         Pref.setServiceRunning(getApplicationContext(), false);
+
+        sendLocalBroadCast(false);
+    }
+
+    private void sendLocalBroadCast(boolean running) {
+        L.d(TAG, "sendLocalBroadCast() : " + running);
+        Intent intent = new Intent("ServiceReceiver");
+        intent.putExtra("running", running);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     private PowerManager.WakeLock mWakeLock;
@@ -63,6 +73,7 @@ public class WakeLockService extends Service {
         }
 
         Pref.setServiceRunning(getApplicationContext(), true);
+        sendLocalBroadCast(true);
     }
 
     private void releaseWakeLock() {

@@ -1,10 +1,13 @@
 package com.drkein.stayon.act;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -29,27 +32,28 @@ public class MainActivity extends Activity {
 
         Switch manualSwitch = (Switch)findViewById(R.id.manualSwitch);
         manualSwitch.setChecked(Pref.getServiceRunning(this));
-        manualSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b) {
-                    sendStartService();
-                } else {
-                    sendStopService();
-                }
-            }
-        });
+        manualSwitch.setOnCheckedChangeListener(mSwitchChangedListener);
 
         IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
         Intent batteryStatus = registerReceiver(null, intentFilter);
         int charger = batteryStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
         if((charger == BatteryManager.BATTERY_PLUGGED_USB)) {
             sendStartService();
-            manualSwitch.setChecked(true);
         }
 
         ((TextView)findViewById(R.id.tvVersion)).setText("v"+ BuildConfig.VERSION_NAME);
     }
+
+    private CompoundButton.OnCheckedChangeListener mSwitchChangedListener = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+            if(b) {
+                sendStartService();
+            } else {
+                sendStopService();
+            }
+        }
+    };
 
     private void sendStartService() {
         L.d(TAG, "sendStartService() ");
@@ -65,4 +69,26 @@ public class MainActivity extends Activity {
         startService(intent);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("ServiceReceiver"));
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+    }
+
+    BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            L.d(TAG, "onReceive() : " + intent.getBooleanExtra("running", false));
+            Switch manualSwitch = (Switch)findViewById(R.id.manualSwitch);
+            manualSwitch.setOnCheckedChangeListener(null);
+            manualSwitch.setChecked(intent.getBooleanExtra("running", false));
+            manualSwitch.setOnCheckedChangeListener(mSwitchChangedListener);
+        }
+    };
 }
