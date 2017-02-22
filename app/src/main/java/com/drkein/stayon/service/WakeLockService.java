@@ -43,18 +43,22 @@ public class WakeLockService extends Service {
         releaseWakeLock();
         stopForeground(true);
         stopSelf();
+        setServiceRunning(false);
     }
 
     private PowerManager.WakeLock mWakeLock;
 
     private void startWakeLock() {
         L.d(TAG, "startWakeLock() ");
-        PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
-        mWakeLock = pm.newWakeLock( PowerManager.ACQUIRE_CAUSES_WAKEUP
-                        | PowerManager.SCREEN_DIM_WAKE_LOCK, "hello");
-        mWakeLock.acquire();
+        if(getServiceRunning()) {
+            PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
+            mWakeLock = pm.newWakeLock( PowerManager.ACQUIRE_CAUSES_WAKEUP
+                    | PowerManager.SCREEN_DIM_WAKE_LOCK, "hello");
+            mWakeLock.acquire();
 
-        startForeground();
+            startForeground();
+            setServiceRunning(true);
+        }
     }
 
     private void releaseWakeLock() {
@@ -74,5 +78,10 @@ public class WakeLockService extends Service {
         startForeground(100, mBuilder.build());
     }
 
-
+    private void setServiceRunning(boolean running) {
+        getSharedPreferences(TAG, Context.MODE_PRIVATE).edit().putBoolean("running", running).apply();
+    }
+    private boolean getServiceRunning() {
+        return  getSharedPreferences(TAG, Context.MODE_PRIVATE).getBoolean("running", false);
+    }
 }

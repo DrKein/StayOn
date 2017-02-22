@@ -2,6 +2,5 @@
 <resources>
     <string name="app_name">StayOn</string>
     <string name="description">Keep screen on while PC - USB is attached.</string>
-    <string name="stay_on_enabled">Screen on Activated</string>
-    <string name="stay_on_disabled">Screen on Disabled</string>
+    <string name="main_turn_on_manual_text">Or, you can turn it on manually.</string>
 </resources>

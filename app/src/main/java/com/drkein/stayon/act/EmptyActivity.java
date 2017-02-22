@@ -9,7 +9,6 @@ import android.os.Handler;
  *
  */
 public class EmptyActivity extends Activity {
-    private static final String TAG = EmptyActivity.class.getSimpleName();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

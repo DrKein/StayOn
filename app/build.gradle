@@ -4,17 +4,31 @@ android {
     buildToolsVersion "24.0.1"
 
     defaultConfig {
-        applicationId "com.drkein.stayon"
+        applicationId "kein.stayon"
         minSdkVersion 16
         targetSdkVersion 24
+        versionCode 3
+        versionName "2.0"
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    if (variant.buildType.name.equals("release")) {
+                        def formattedDate = new Date().format('yyyyMMdd_HHmm')
+                        def fullName = output.outputFile.name
+                        output.outputFile = new File(output.outputFile.parent, output.outputFile.name.replace(fullName,
+                                "stayon_v${defaultConfig.versionName}_c${defaultConfig.versionCode}_${variant.baseName}_${formattedDate}.apk"))
+                    }
+                }
+            }
         }
     }
 }
+
 dependencies {
 }
