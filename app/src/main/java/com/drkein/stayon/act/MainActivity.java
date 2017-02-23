@@ -12,6 +12,8 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.drkein.stayon.BuildConfig;
 import com.drkein.stayon.R;
 import com.drkein.stayon.service.WakeLockService;
@@ -28,7 +30,7 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.main_activity);
 
         Switch manualSwitch = (Switch)findViewById(R.id.manualSwitch);
         manualSwitch.setChecked(Pref.getServiceRunning(this));
@@ -47,6 +49,7 @@ public class MainActivity extends Activity {
     private CompoundButton.OnCheckedChangeListener mSwitchChangedListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+            L.d(TAG, "onCheckedChanged() : " + b);
             if(b) {
                 sendStartService();
             } else {
@@ -60,6 +63,8 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(this, WakeLockService.class);
         intent.putExtra("ACTION", WakeLockService.ACTION_START);
         startService(intent);
+
+        Answers.getInstance().logCustom(new CustomEvent("Switch").putCustomAttribute("click", "StartService"));
     }
 
     private void sendStopService() {
@@ -67,6 +72,8 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(this, WakeLockService.class);
         intent.putExtra("ACTION", WakeLockService.ACTION_STOP);
         startService(intent);
+
+        Answers.getInstance().logCustom(new CustomEvent("Switch").putCustomAttribute("click", "StopService"));
     }
 
     @Override

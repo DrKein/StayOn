@@ -7,6 +7,8 @@ import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.text.TextUtils;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.drkein.stayon.act.EmptyActivity;
 import com.drkein.stayon.service.WakeLockService;
 import com.drkein.stayon.tools.L;
@@ -54,6 +56,8 @@ public class PowerConnectionReceiver extends BroadcastReceiver {
         Intent intent = new Intent(context, WakeLockService.class);
         intent.putExtra("ACTION", WakeLockService.ACTION_START);
         context.startService(intent);
+
+        Answers.getInstance().logCustom(new CustomEvent(TAG).putCustomAttribute("send", "StartService"));
     }
 
     private void sendStopService(Context context) {
@@ -61,6 +65,8 @@ public class PowerConnectionReceiver extends BroadcastReceiver {
         Intent intent = new Intent(context, WakeLockService.class);
         intent.putExtra("ACTION", WakeLockService.ACTION_STOP);
         context.startService(intent);
+
+        Answers.getInstance().logCustom(new CustomEvent(TAG).putCustomAttribute("send", "StopService"));
     }
 
     /** To avoid battery saver */
