@@ -33,11 +33,13 @@ public class WakeLockService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        String action = intent.getStringExtra("ACTION");
-        if (TextUtils.isEmpty(action) || action.equals(ACTION_STOP)) {
-            stopWakeLock();
-        } else {
-            startWakeLock();
+        if(intent != null) {
+            String action = intent.getStringExtra("ACTION");
+            if (TextUtils.isEmpty(action) || action.equals(ACTION_STOP)) {
+                stopWakeLock();
+            } else {
+                startWakeLock();
+            }
         }
         return super.onStartCommand(intent, flags, startId);
     }

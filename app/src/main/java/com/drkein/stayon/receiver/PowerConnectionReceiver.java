@@ -39,7 +39,7 @@ public class PowerConnectionReceiver extends BroadcastReceiver {
     private void processAction(Context context, String action) {
         if(action.equals(ACTION_POWER_CONNECTED)) {
             IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-            Intent batteryStatus = context.registerReceiver(null, intentFilter);
+            Intent batteryStatus = context.getApplicationContext().registerReceiver(null, intentFilter);
             int charger = batteryStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
 
             if((charger == BatteryManager.BATTERY_PLUGGED_USB)) {
