@@ -12,8 +12,6 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.CustomEvent;
 import com.drkein.stayon.BuildConfig;
 import com.drkein.stayon.R;
 import com.drkein.stayon.service.WakeLockService;
@@ -32,7 +30,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Switch manualSwitch = (Switch)findViewById(R.id.manualSwitch);
+        Switch manualSwitch = (Switch) findViewById(R.id.manualSwitch);
         manualSwitch.setChecked(Pref.getServiceRunning(this));
         manualSwitch.setOnCheckedChangeListener(mSwitchChangedListener);
 
@@ -63,8 +61,6 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(this, WakeLockService.class);
         intent.putExtra("ACTION", WakeLockService.ACTION_START);
         startService(intent);
-
-        Answers.getInstance().logCustom(new CustomEvent("Switch").putCustomAttribute("click", "StartService"));
     }
 
     private void sendStopService() {
@@ -72,8 +68,6 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(this, WakeLockService.class);
         intent.putExtra("ACTION", WakeLockService.ACTION_STOP);
         startService(intent);
-
-        Answers.getInstance().logCustom(new CustomEvent("Switch").putCustomAttribute("click", "StopService"));
     }
 
     @Override
@@ -92,7 +86,7 @@ public class MainActivity extends Activity {
         @Override
         public void onReceive(Context context, Intent intent) {
             L.d(TAG, "onReceive() : " + intent.getBooleanExtra("running", false));
-            Switch manualSwitch = (Switch)findViewById(R.id.manualSwitch);
+            Switch manualSwitch = (Switch) findViewById(R.id.manualSwitch);
             manualSwitch.setOnCheckedChangeListener(null);
             manualSwitch.setChecked(intent.getBooleanExtra("running", false));
             manualSwitch.setOnCheckedChangeListener(mSwitchChangedListener);

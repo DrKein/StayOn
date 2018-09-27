@@ -8,15 +8,18 @@ buildscript {
     }
 }
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 apply plugin: 'io.fabric'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
+    google()
+    mavenCentral()
 }
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.0"
+    buildToolsVersion "25.0.3"
 
     defaultConfig {
         applicationId "kein.stayon"
@@ -32,12 +35,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
 
             applicationVariants.all { variant ->
-                variant.outputs.each { output ->
-                    if (variant.buildType.name.equals("release")) {
+                variant.outputs.all { output ->
+                    if (variant.buildType.name == "release") {
                         def formattedDate = new Date().format('yyyyMMdd_HHmm')
-                        def fullName = output.outputFile.name
-                        output.outputFile = new File(output.outputFile.parent, output.outputFile.name.replace(fullName,
-                                "stayon_v${defaultConfig.versionName}_c${defaultConfig.versionCode}_${variant.baseName}_${formattedDate}.apk"))
+                        outputFileName = "stayon_v${defaultConfig.versionName}_c${defaultConfig.versionCode}_${variant.baseName}_${formattedDate}.apk"
                     }
                 }
             }
@@ -46,8 +47,10 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:25.1.1'
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.6@aar') {
-        transitive = true;
+    implementation 'com.android.support:support-v4:25.4.0'
+    implementation('com.crashlytics.sdk.android:crashlytics:2.9.5@aar') {
+        transitive = true
     }
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
+

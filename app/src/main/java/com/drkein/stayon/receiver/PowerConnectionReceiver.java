@@ -7,8 +7,6 @@ import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.text.TextUtils;
 
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.CustomEvent;
 import com.drkein.stayon.act.EmptyActivity;
 import com.drkein.stayon.service.WakeLockService;
 import com.drkein.stayon.tools.L;
@@ -21,33 +19,30 @@ import static android.content.Intent.ACTION_POWER_CONNECTED;
 public class PowerConnectionReceiver extends BroadcastReceiver {
     private static final String TAG = PowerConnectionReceiver.class.getSimpleName();
 
-	@Override
-	public void onReceive(Context context, Intent intent) {
+    @Override
+    public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         L.d(TAG, "onReceive() : " + action);
-		if(!TextUtils.isEmpty(action)) {
+        if (!TextUtils.isEmpty(action)) {
             processAction(context, action);
         }
-
-		if(isNeedToShowEmptyActivity(context)) {
-			Intent i = new Intent(context, EmptyActivity.class);
-			i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			context.startActivity(i);
-		}
-	}
+        if (isNeedToShowEmptyActivity(context)) {
+            Intent i = new Intent(context, EmptyActivity.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(i);
+        }
+    }
 
     private void processAction(Context context, String action) {
-        if(action.equals(ACTION_POWER_CONNECTED)) {
+        if (action.equals(ACTION_POWER_CONNECTED)) {
             IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
             Intent batteryStatus = context.getApplicationContext().registerReceiver(null, intentFilter);
             int charger = batteryStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
-
-            if((charger == BatteryManager.BATTERY_PLUGGED_USB)) {
+            if ((charger == BatteryManager.BATTERY_PLUGGED_USB)) {
                 sendStartService(context);
                 return;
             }
         }
-
         sendStopService(context);
     }
 
@@ -56,8 +51,6 @@ public class PowerConnectionReceiver extends BroadcastReceiver {
         Intent intent = new Intent(context, WakeLockService.class);
         intent.putExtra("ACTION", WakeLockService.ACTION_START);
         context.startService(intent);
-
-        Answers.getInstance().logCustom(new CustomEvent(TAG).putCustomAttribute("send", "StartService"));
     }
 
     private void sendStopService(Context context) {
@@ -65,21 +58,21 @@ public class PowerConnectionReceiver extends BroadcastReceiver {
         Intent intent = new Intent(context, WakeLockService.class);
         intent.putExtra("ACTION", WakeLockService.ACTION_STOP);
         context.startService(intent);
-
-        Answers.getInstance().logCustom(new CustomEvent(TAG).putCustomAttribute("send", "StopService"));
     }
 
-    /** To avoid battery saver */
-	private boolean isNeedToShowEmptyActivity(Context ctx) {
-		String lastRunDate = ctx.getSharedPreferences(TAG, Context.MODE_PRIVATE).getString("lastRunDate", "");
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-		String today = sdf.format(new Date());
-		if(lastRunDate.equals(today)) {
-			return false;
-		} else {
-			ctx.getSharedPreferences(TAG, Context.MODE_PRIVATE).edit().putString("lastRunDate", today).apply();
-			return true;
-		}
-	}
+    /**
+     * To avoid battery saver
+     */
+    private boolean isNeedToShowEmptyActivity(Context ctx) {
+        String lastRunDate = ctx.getSharedPreferences(TAG, Context.MODE_PRIVATE).getString("lastRunDate", "");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        String today = sdf.format(new Date());
+        if (lastRunDate.equals(today)) {
+            return false;
+        } else {
+            ctx.getSharedPreferences(TAG, Context.MODE_PRIVATE).edit().putString("lastRunDate", today).apply();
+            return true;
+        }
+    }
 
 }

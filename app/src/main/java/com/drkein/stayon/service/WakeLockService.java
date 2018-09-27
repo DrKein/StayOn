@@ -67,7 +67,7 @@ public class WakeLockService extends Service {
         L.d(TAG, "startWakeLock() ");
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         if(mWakeLock == null) {
-            mWakeLock = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK, "hello");
+            mWakeLock = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK, "app:hello");
         }
         if(!mWakeLock.isHeld()) {
             mWakeLock.acquire();
